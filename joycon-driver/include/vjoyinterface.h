@@ -95,8 +95,8 @@ struct DeviceStat {
 };
 
 struct DEV_INFO {
-	BYTE	DeviceID;		// Device ID: Valid values are 1-16
-	BYTE	nImplemented;	// Number of implemented device: Valid values are 1-16
+	BYTE	DeviceID;		// Device ID= Valid values are 1-16
+	BYTE	nImplemented;	// Number of implemented device= Valid values are 1-16
 	BYTE	isImplemented;	// Is this device implemented?
 	BYTE	MaxDevices;		// Maximum number of devices that may be implemented (16)
 	BYTE	DriverFFB;		// Does this driver support FFB (False)
@@ -190,7 +190,7 @@ typedef struct _FFB_DATA {
 
 typedef struct _FFB_EFF_CONSTANT { 
 	BYTE EffectBlockIndex; 
-	LONG Magnitude; 			  // Constant force magnitude: 	-10000 - 10000
+	LONG Magnitude; 			  // Constant force magnitude= 	-10000 - 10000
 } FFB_EFF_CONSTANT, *PFFB_EFF_CONSTANT;
 
 typedef struct _FFB_EFF_RAMP {
@@ -211,10 +211,10 @@ typedef struct _FFB_EFF_REPORT {
 	BOOL		Polar; // How to interpret force direction Polar (0-360°) or Cartesian (X,Y)
 	union
 	{
-		BYTE	Direction; // Polar direction: (0x00-0xFF correspond to 0-360°)
-		BYTE	DirX; // X direction: Positive values are To the right of the center (X); Negative are Two's complement
+		BYTE	Direction; // Polar direction= (0x00-0xFF correspond to 0-360°)
+		BYTE	DirX; // X direction= Positive values are To the right of the center (X); Negative are Two's complement
 	};
-	BYTE		DirY; // Y direction: Positive values are below the center (Y); Negative are Two's complement
+	BYTE		DirY; // Y direction= Positive values are below the center (Y); Negative are Two's complement
 } FFB_EFF_REPORT, *PFFB_EFF_REPORT;
 //} FFB_EFF_CONST, *PFFB_EFF_CONST;
 
@@ -226,29 +226,29 @@ typedef struct _FFB_EFF_OP {
 
 typedef struct _FFB_EFF_PERIOD {
 	BYTE		EffectBlockIndex;
-	DWORD		Magnitude;			// Range: 0 - 10000
-	LONG 		Offset;				// Range: –10000 - 10000
-	DWORD 		Phase;				// Range: 0 - 35999
-	DWORD 		Period;				// Range: 0 - 32767
+	DWORD		Magnitude;			// Range= 0 - 10000
+	LONG 		Offset;				// Range= –10000 - 10000
+	DWORD 		Phase;				// Range= 0 - 35999
+	DWORD 		Period;				// Range= 0 - 32767
 } FFB_EFF_PERIOD, *PFFB_EFF_PERIOD;
 
 typedef struct _FFB_EFF_COND {
 	BYTE		EffectBlockIndex;
 	BOOL		isY;
-	LONG 		CenterPointOffset; // CP Offset:  Range -­10000 ­- 10000
-	LONG 		PosCoeff; // Positive Coefficient: Range -­10000 ­- 10000
-	LONG 		NegCoeff; // Negative Coefficient: Range -­10000 ­- 10000
-	DWORD 		PosSatur; // Positive Saturation: Range 0 – 10000
-	DWORD 		NegSatur; // Negative Saturation: Range 0 – 10000
-	LONG 		DeadBand; // Dead Band: : Range 0 – 1000
+	LONG 		CenterPointOffset; // CP Offset=  Range -­10000 ­- 10000
+	LONG 		PosCoeff; // Positive Coefficient= Range -­10000 ­- 10000
+	LONG 		NegCoeff; // Negative Coefficient= Range -­10000 ­- 10000
+	DWORD 		PosSatur; // Positive Saturation= Range 0 – 10000
+	DWORD 		NegSatur; // Negative Saturation= Range 0 – 10000
+	LONG 		DeadBand; // Dead Band= = Range 0 – 1000
 } FFB_EFF_COND, *PFFB_EFF_COND;
 
 typedef struct _FFB_EFF_ENVLP {
 	BYTE		EffectBlockIndex;
-	DWORD 		AttackLevel;   // The Normalized magnitude of the stating point: 0 - 10000
-	DWORD 		FadeLevel;	   // The Normalized magnitude of the stopping point: 0 - 10000
-	DWORD 		AttackTime;	   // Time of the attack: 0 - 4294967295
-	DWORD 		FadeTime;	   // Time of the fading: 0 - 4294967295
+	DWORD 		AttackLevel;   // The Normalized magnitude of the stating point= 0 - 10000
+	DWORD 		FadeLevel;	   // The Normalized magnitude of the stopping point= 0 - 10000
+	DWORD 		AttackTime;	   // Time of the attack= 0 - 4294967295
+	DWORD 		FadeTime;	   // Time of the fading= 0 - 4294967295
 } FFB_EFF_ENVLP, *PFFB_EFF_ENVLP;
 
 #define FFB_DATA_READY	 WM_USER+31
@@ -267,14 +267,14 @@ namespace vJoyNS {
 		These functions allow writing feeders and other applications that interface with vJoy
 		It is assumed that only one vJoy top-device (= Raw PDO) exists.
 		This top-level device can have up to 16 siblings (=top-level Reports/collections)
-		Each sibling is refered to as a "vJoy Device" and is attributed a unique Report ID (Range: 1-16).
+		Each sibling is refered to as a "vJoy Device" and is attributed a unique Report ID (Range= 1-16).
 
-		Naming convetion:
+		Naming convetion=
 			VJD = vJoy Device
 			rID = Report ID
 	*/
 #pragma warning( push )
-#pragma warning( disable : 4995 )
+#pragma warning( disable = 4995 )
 	/////	General driver data
 	VJOYINTERFACE_API SHORT __cdecl GetvJoyVersion(void);
 	VJOYINTERFACE_API BOOL	__cdecl vJoyEnabled(void);

@@ -2,6 +2,7 @@
 #include <Windows.h>
 #pragma comment(lib, "user32.lib")
 
+#include <thread>
 #include <bitset>
 #include <random>
 #include <stdafx.h>
@@ -26,6 +27,8 @@
 #include <glm/glm.hpp>
 #include <glm/gtx/quaternion.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+
+#include <inih/INIReader.h>
 
 
 #if defined(_WIN32)
@@ -78,7 +81,6 @@ struct Settings {
 	float gyroSensitivityX = 150.0f;
 	float gyroSensitivityY = 150.0f;
 
-
 	// prefer the left joycon for gyro controls
 	bool preferLeftJoyCon = false;
 
@@ -100,19 +102,6 @@ struct Settings {
 	bool canToggleGyro = true;
 
 
-	// enables 3D gyroscope visualizer
-	bool gyroWindow = false;
-
-	// plays a version of the mario theme by vibrating
-	// the first JoyCon connected.
-	bool marioTheme = false;
-
-	// bool to restart the program
-	bool restart = false;
-
-	// auto start the program
-	bool autoStart = false;
-
 	// debug mode
 	bool debugMode = false;
 
@@ -128,13 +117,10 @@ struct Settings {
 	bool forcePollUpdate = false;
 
 	// times to poll per second per joycon:
-	float pollsPerSec = 30.0f;
+	float pollsPerSec = 125.0f;
 
 	// time to sleep (in ms) between polls:
 	float timeToSleepMS = 4.0f;
-
-	// version number
-	std::string version = "1.07";
 
 } settings;
 
@@ -459,7 +445,6 @@ void handle_input(Joycon* jc, uint8_t* packet, int len) {
 
 
 			if (settings.debugMode) {
-
 				fprintf(settings.writeDebugToFile ? settings.outputFile : stdout, "U: %d D: %d L: %d R: %d LL: %d ZL: %d SB: %d SL: %d SR: %d M: %d C: %d SX: %.5f SY: %.5f GR: %06d GP: %06d GY: %06d\n", \
 					jc->btns.up, jc->btns.down, jc->btns.left, jc->btns.right, jc->btns.l, jc->btns.zl, jc->btns.stick_button, jc->btns.sl, jc->btns.sr, \
 					jc->btns.minus, jc->btns.capture, (jc->stick.CalX + 1), (jc->stick.CalY + 1), (int)jc->gyro.roll, (int)jc->gyro.pitch, (int)jc->gyro.yaw);
@@ -469,24 +454,19 @@ void handle_input(Joycon* jc, uint8_t* packet, int len) {
 					jc->btns.plus, jc->btns.home, (jc->stick2.CalX + 1), (jc->stick2.CalY + 1), (int)jc->gyro.roll, (int)jc->gyro.pitch, (int)jc->gyro.yaw);
 			}
 		}
-
 	}
 }
 
-
-
-
-
 int acquirevJoyDevice(int deviceID) {
 
-	int stat;
+	int stat = 0;
 
 	// Get the driver attributes (Vendor ID, Product ID, Version Number)
 	if (!vJoyEnabled()) {
 		printf("Function vJoyEnabled Failed - make sure that vJoy is installed and enabled\n");
 		int dummy = getchar();
 		stat = -2;
-		throw;
+		return stat;
 	}
 	else {
 		//wprintf(L"Vendor: %s\nProduct :%s\nVersion Number:%s\n", static_cast<TCHAR *> (GetvJoyManufacturerString()), static_cast<TCHAR *>(GetvJoyProductString()), static_cast<TCHAR *>(GetvJoySerialNumberString()));
@@ -519,11 +499,12 @@ int acquirevJoyDevice(int deviceID) {
 		printf("Failed to acquire vJoy device number %d.\n", deviceID);
 		int dummy = getchar();
 		stat = -1;
-		throw;
 	}
 	else {
 		printf("Acquired device number %d - OK\n", deviceID);
 	}
+
+	return stat;
 }
 
 
@@ -631,12 +612,8 @@ void updatevJoyDevice2(Joycon* jc) {
 
 		int multiplier;
 
-
 		// Gyroscope (roll, pitch, yaw):
 		multiplier = 1000;
-
-
-
 
 		// complementary filtered tracking
 		// uses gyro + accelerometer
@@ -705,9 +682,6 @@ void updatevJoyDevice2(Joycon* jc) {
 
 		glm::fquat delz = glm::angleAxis(glm::radians(-yaw), glm::vec3(0.0, 1.0, 0.0));
 		tracker.quat = tracker.quat * delz;
-
-
-
 
 
 		float relX2 = -jc->gyro.yaw * settings.gyroSensitivityX;
@@ -779,18 +753,18 @@ void updatevJoyDevice2(Joycon* jc) {
 		}
 
 		if (settings.dolphinPointerMode) {
-			iReport.wAxisZRot += (jc->gyro.roll * mult);
-			iReport.wSlider += (jc->gyro.pitch * mult);
-			iReport.wDial += (jc->gyro.yaw * mult);
+			iReport.wAxisZRot += (LONG)(jc->gyro.roll * mult);
+			iReport.wSlider += (LONG)(jc->gyro.pitch * mult);
+			iReport.wDial += (LONG)(jc->gyro.yaw * mult);
 
-			iReport.wAxisZRot = clamp(iReport.wAxisZRot, 0, 32678);
-			iReport.wSlider = clamp(iReport.wSlider, 0, 32678);
-			iReport.wDial = clamp(iReport.wDial, 0, 32678);
+			iReport.wAxisZRot = (LONG)clamp(iReport.wAxisZRot, 0, 32678);
+			iReport.wSlider = (LONG)clamp(iReport.wSlider, 0, 32678);
+			iReport.wDial = (LONG)clamp(iReport.wDial, 0, 32678);
 		}
 		else {
-			iReport.wAxisZRot = 16384 + (jc->gyro.roll * mult);
-			iReport.wSlider = 16384 + (jc->gyro.pitch * mult);
-			iReport.wDial = 16384 + (jc->gyro.yaw * mult);
+			iReport.wAxisZRot = 16384 + (LONG)(jc->gyro.roll * mult);
+			iReport.wSlider = 16384 + (LONG)(jc->gyro.pitch * mult);
+			iReport.wDial = 16384 + (LONG)(jc->gyro.yaw * mult);
 		}
 	}
 
@@ -832,39 +806,37 @@ void updatevJoyDevice2(Joycon* jc) {
 	}
 }
 
-void parseSettings2() {
+bool parseSettings2() {
 
 	//setupConsole("Debug");
 
-	std::map<std::string, std::string> cfg = LoadConfig("config.txt");
+	INIReader reader{ "config.ini" };
+	if (reader.ParseError() != 0) {
+		printf("Failed to read config file!\r\n");
+		return false;
+	}
 
-	settings.combineJoyCons = (bool)stoi(cfg["combineJoyCons"]);
-	settings.enableGyro = (bool)stoi(cfg["gyroControls"]);
+	settings.debugMode = reader.GetBoolean("driver", "debug", false);
+	settings.writeDebugToFile = reader.GetBoolean("driver", "logToFile", false);
+	settings.forcePollUpdate = reader.GetBoolean("driver", "forcePoll", false);
+	settings.pollsPerSec = reader.GetFloat("driver", "pollRate", 125.0f);
+	settings.timeToSleepMS = (1000.0f / settings.pollsPerSec) / 2.0f;
 
-	settings.gyroSensitivityX = stof(cfg["gyroSensitivityX"]);
-	settings.gyroSensitivityY = stof(cfg["gyroSensitivityY"]);
+	settings.combineJoyCons = reader.GetBoolean("joycon", "combine", true);
+	settings.dolphinPointerMode = reader.GetBoolean("joycon", "dolphin", false);
+	settings.reverseX = reader.GetBoolean("joycon", "invertX", false);
+	settings.reverseY = reader.GetBoolean("joycon", "invertY", false);
 
-	settings.gyroWindow = (bool)stoi(cfg["gyroWindow"]);
-	settings.marioTheme = (bool)stoi(cfg["marioTheme"]);
+	settings.enableGyro = reader.GetBoolean("gyro_pointer", "enabled", true);
+	settings.gyroSensitivityX = reader.GetFloat("gyro_pointer", "sensitivityX", 300.0f);
+	settings.gyroSensitivityY = reader.GetFloat("gyro_pointer", "sensitivityY", 300.0f);
+	settings.preferLeftJoyCon = reader.GetBoolean("gyro_pointer", "preferLeft", false);
+	settings.gyroscopeComboCode = reader.GetInteger("gyro_pointer", "combo", 0);
 
-	settings.reverseX = (bool)stoi(cfg["reverseX"]);
-	settings.reverseY = (bool)stoi(cfg["reverseY"]);
+	//settings.quickToggleGyro = (bool)stoi(cfg["quickToggleGyro"]);
+	//settings.invertQuickToggle = (bool)stoi(cfg["invertQuickToggle"]);
 
-	settings.preferLeftJoyCon = (bool)stoi(cfg["preferLeftJoyCon"]);
-	settings.quickToggleGyro = (bool)stoi(cfg["quickToggleGyro"]);
-	settings.invertQuickToggle = (bool)stoi(cfg["invertQuickToggle"]);
-
-	settings.dolphinPointerMode = (bool)stoi(cfg["dolphinPointerMode"]);
-
-	settings.gyroscopeComboCode = stoi(cfg["gyroscopeComboCode"]);
-
-	settings.debugMode = (bool)stoi(cfg["debugMode"]);
-	settings.writeDebugToFile = (bool)stoi(cfg["writeDebugToFile"]);
-
-	settings.forcePollUpdate = (bool)stoi(cfg["forcePollUpdate"]);
-
-	settings.autoStart = (bool)stoi(cfg["autoStart"]);
-
+	return true;
 }
 
 bool start();
@@ -930,28 +902,16 @@ void pollLoop() {
 	}
 
 	accurateSleep(settings.timeToSleepMS);
-
-	if (settings.restart) {
-		settings.restart = false;
-		start();
-	}
 }
 
 
 
 bool start() {
 
-	// set infinite reconnect attempts
-	/*myClient.set_reconnect_attempts(999999999999);
-	if (settings.broadcastMode) {
-		myClient.connect(settings.host);
-	}*/
-
-
-
 	// get vJoy Device 1-8
 	for (int i = 1; i < 9; ++i) {
-		acquirevJoyDevice(i);
+		if (acquirevJoyDevice(i) == -2)
+			return false;
 	}
 
 	int read;	// number of bytes read
@@ -982,9 +942,6 @@ bool start() {
 
 		settings.outputFile = fopen(name.c_str(), "w");
 	}
-
-
-init_start:
 
 	devs = hid_enumerate(JOYCON_VENDOR, 0x0);
 	cur_dev = devs;
@@ -1121,27 +1078,14 @@ void actuallyQuit() {
 	res = hid_exit();
 }
 
-bool running = true;
-
-BOOL WINAPI SignalHandler(DWORD signal) {
-	if (signal == CTRL_C_EVENT) {
-		running = false;
-		return TRUE;
-	}
-
-	return FALSE;
-}
 
 int main(int argc, char* argv[]) {
-	//int wWinMain(HINSTANCE hInstance, HINSTANCE prevInstance, LPWSTR cmdLine, int cmdShow) {
-
 	setupConsole("Debug");
-	SetConsoleCtrlHandler(SignalHandler, true);
 
 	parseSettings2();
 
 	if (start()) {
-		while (running) {
+		while (gRunning) {
 			pollLoop();
 		}
 	}

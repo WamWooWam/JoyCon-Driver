@@ -20,6 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\hidapi.h" />
+    <ClInclude Include="include\inih\INIReader.h" />
     <ClInclude Include="include\Joycon.hpp" />
     <ClInclude Include="include\MouseController.hpp" />
     <ClInclude Include="include\packet.h" />
@@ -58,7 +59,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>ClangCL</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
     <UseOfMfc>false</UseOfMfc>
@@ -141,7 +142,7 @@
     <PreBuildEvent>
       <Command>copy $(ProjectDir)libs\hidapi-win\$(PlatformTarget)\hidapi.dll $(OutputPath)
 copy $(ProjectDir)libs\vjoy\$(PlatformTarget)\vJoyInterface.dll $(OutputPath)
-copy $(ProjectDir)config.txt $(OutputPath)</Command>
+copy $(ProjectDir)config.ini $(OutputPath)</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -160,7 +161,7 @@ copy $(ProjectDir)config.txt $(OutputPath)</Command>
     <PreBuildEvent>
       <Command>copy $(ProjectDir)libs\hidapi-win\$(PlatformTarget)\hidapi.dll $(OutputPath)
 copy $(ProjectDir)libs\vjoy\$(PlatformTarget)\vJoyInterface.dll $(OutputPath)
-copy $(ProjectDir)config.txt $(OutputPath)</Command>
+copy $(ProjectDir)config.ini $(OutputPath)</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -184,7 +185,7 @@ copy $(ProjectDir)config.txt $(OutputPath)</Command>
     <PreBuildEvent>
       <Command>copy $(ProjectDir)libs\hidapi-win\$(PlatformTarget)\hidapi.dll $(OutputPath)
 copy $(ProjectDir)libs\vjoy\$(PlatformTarget)\vJoyInterface.dll $(OutputPath)
-copy $(ProjectDir)config.txt $(OutputPath)</Command>
+copy $(ProjectDir)config.ini $(OutputPath)</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -208,7 +209,7 @@ copy $(ProjectDir)config.txt $(OutputPath)</Command>
     <PreBuildEvent>
       <Command>copy $(ProjectDir)libs\hidapi-win\$(PlatformTarget)\hidapi.dll $(OutputPath)
 copy $(ProjectDir)libs\vjoy\$(PlatformTarget)\vJoyInterface.dll $(OutputPath)
-copy $(ProjectDir)config.txt $(OutputPath)</Command>
+copy $(ProjectDir)config.ini $(OutputPath)</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

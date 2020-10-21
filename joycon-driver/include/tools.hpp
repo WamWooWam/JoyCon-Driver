@@ -129,6 +129,17 @@ std::map<std::string, std::string> LoadConfig(std::string filename)
 }
 
 
+static bool gRunning = true;
+
+BOOL WINAPI SignalHandler(DWORD signal) {
+	if (signal == CTRL_C_EVENT) {
+		gRunning = false;
+		return TRUE;
+	}
+
+	return FALSE;
+}
+
 void setupConsole(std::string title) {
 	//// setup console
 	//AllocConsole();
@@ -138,6 +149,7 @@ void setupConsole(std::string title) {
 	//printf("Debugging Window:\n");
 
 	SetConsoleTitleA((char*)title.c_str());
+	SetConsoleCtrlHandler(SignalHandler, true);
 }
 
 
