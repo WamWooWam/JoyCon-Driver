@@ -1219,7 +1219,7 @@ init_start:
 	hid_free_enumeration(devs);
 
 	if (joycons.size() == 0) {
-		printf("No JoyCon found!");
+		printf("No JoyCon found!\r\n");
 		return false;
 	}
 
