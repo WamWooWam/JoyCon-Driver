@@ -122,15 +122,6 @@ struct Settings {
 	// debug file:
 	FILE* outputFile;
 
-	// broadcast mode:
-	bool broadcastMode = false;
-	// where to connect:
-	std::string host = "";
-	// string to send:
-	std::string controllerState = "";
-	// write cast to file:
-	bool writeCastToFile = false;
-
 	// poll options:
 
 	// force joycon to update when polled:
@@ -409,12 +400,7 @@ void handle_input(Joycon* jc, uint8_t* packet, int len) {
 
 
 			if (settings.debugMode) {
-				printf("U: %d D: %d L: %d R: %d LL: %d ZL: %d SB: %d SL: %d SR: %d M: %d C: %d SX: %.5f SY: %.5f GR: %06d GP: %06d GY: %06d\n", \
-					jc->btns.up, jc->btns.down, jc->btns.left, jc->btns.right, jc->btns.l, jc->btns.zl, jc->btns.stick_button, jc->btns.sl, jc->btns.sr, \
-					jc->btns.minus, jc->btns.capture, (jc->stick.CalX + 1), (jc->stick.CalY + 1), (int)jc->gyro.roll, (int)jc->gyro.pitch, (int)jc->gyro.yaw);
-			}
-			if (settings.writeDebugToFile) {
-				fprintf(settings.outputFile, "U: %d D: %d L: %d R: %d LL: %d ZL: %d SB: %d SL: %d SR: %d M: %d C: %d SX: %.5f SY: %.5f GR: %06d GP: %06d GY: %06d\n", \
+				fprintf(settings.writeDebugToFile ? settings.outputFile : stdout, "U: %d D: %d L: %d R: %d LL: %d ZL: %d SB: %d SL: %d SR: %d M: %d C: %d SX: %.5f SY: %.5f GR: %06d GP: %06d GY: %06d\n", \
 					jc->btns.up, jc->btns.down, jc->btns.left, jc->btns.right, jc->btns.l, jc->btns.zl, jc->btns.stick_button, jc->btns.sl, jc->btns.sr, \
 					jc->btns.minus, jc->btns.capture, (jc->stick.CalX + 1), (jc->stick.CalY + 1), (int)jc->gyro.roll, (int)jc->gyro.pitch, (int)jc->gyro.yaw);
 			}
@@ -436,12 +422,7 @@ void handle_input(Joycon* jc, uint8_t* packet, int len) {
 
 
 			if (settings.debugMode) {
-				printf("A: %d B: %d X: %d Y: %d RR: %d ZR: %d SB: %d SL: %d SR: %d P: %d H: %d SX: %.5f SY: %.5f GR: %06d GP: %06d GY: %06d\n", \
-					jc->btns.a, jc->btns.b, jc->btns.x, jc->btns.y, jc->btns.r, jc->btns.zr, jc->btns.stick_button, jc->btns.sl, jc->btns.sr, \
-					jc->btns.plus, jc->btns.home, (jc->stick.CalX + 1), (jc->stick.CalY + 1), (int)jc->gyro.roll, (int)jc->gyro.pitch, (int)jc->gyro.yaw);
-			}
-			if (settings.writeDebugToFile) {
-				fprintf(settings.outputFile, "A: %d B: %d X: %d Y: %d RR: %d ZR: %d SB: %d SL: %d SR: %d P: %d H: %d SX: %.5f SY: %.5f GR: %06d GP: %06d GY: %06d\n", \
+				fprintf(settings.writeDebugToFile ? settings.outputFile : stdout, "A: %d B: %d X: %d Y: %d RR: %d ZR: %d SB: %d SL: %d SR: %d P: %d H: %d SX: %.5f SY: %.5f GR: %06d GP: %06d GY: %06d\n", \
 					jc->btns.a, jc->btns.b, jc->btns.x, jc->btns.y, jc->btns.r, jc->btns.zr, jc->btns.stick_button, jc->btns.sl, jc->btns.sr, \
 					jc->btns.plus, jc->btns.home, (jc->stick.CalX + 1), (jc->stick.CalY + 1), (int)jc->gyro.roll, (int)jc->gyro.pitch, (int)jc->gyro.yaw);
 			}
@@ -479,25 +460,14 @@ void handle_input(Joycon* jc, uint8_t* packet, int len) {
 
 			if (settings.debugMode) {
 
-				printf("U: %d D: %d L: %d R: %d LL: %d ZL: %d SB: %d SL: %d SR: %d M: %d C: %d SX: %.5f SY: %.5f GR: %06d GP: %06d GY: %06d\n", \
+				fprintf(settings.writeDebugToFile ? settings.outputFile : stdout, "U: %d D: %d L: %d R: %d LL: %d ZL: %d SB: %d SL: %d SR: %d M: %d C: %d SX: %.5f SY: %.5f GR: %06d GP: %06d GY: %06d\n", \
 					jc->btns.up, jc->btns.down, jc->btns.left, jc->btns.right, jc->btns.l, jc->btns.zl, jc->btns.stick_button, jc->btns.sl, jc->btns.sr, \
 					jc->btns.minus, jc->btns.capture, (jc->stick.CalX + 1), (jc->stick.CalY + 1), (int)jc->gyro.roll, (int)jc->gyro.pitch, (int)jc->gyro.yaw);
 
-				printf("A: %d B: %d X: %d Y: %d RR: %d ZR: %d SB: %d SL: %d SR: %d P: %d H: %d SX: %.5f SY: %.5f GR: %06d GP: %06d GY: %06d\n", \
+				fprintf(settings.writeDebugToFile ? settings.outputFile : stdout, "A: %d B: %d X: %d Y: %d RR: %d ZR: %d SB: %d SL: %d SR: %d P: %d H: %d SX: %.5f SY: %.5f GR: %06d GP: %06d GY: %06d\n", \
 					jc->btns.a, jc->btns.b, jc->btns.x, jc->btns.y, jc->btns.r, jc->btns.zr, jc->btns.stick_button2, jc->btns.sl, jc->btns.sr, \
 					jc->btns.plus, jc->btns.home, (jc->stick2.CalX + 1), (jc->stick2.CalY + 1), (int)jc->gyro.roll, (int)jc->gyro.pitch, (int)jc->gyro.yaw);
 			}
-
-			if (settings.writeDebugToFile) {
-				fprintf(settings.outputFile, "U: %d D: %d L: %d R: %d LL: %d ZL: %d SB: %d SL: %d SR: %d M: %d C: %d SX: %.5f SY: %.5f GR: %06d GP: %06d GY: %06d\n", \
-					jc->btns.up, jc->btns.down, jc->btns.left, jc->btns.right, jc->btns.l, jc->btns.zl, jc->btns.stick_button, jc->btns.sl, jc->btns.sr, \
-					jc->btns.minus, jc->btns.capture, (jc->stick.CalX + 1), (jc->stick.CalY + 1), (int)jc->gyro.roll, (int)jc->gyro.pitch, (int)jc->gyro.yaw);
-
-				fprintf(settings.outputFile, "A: %d B: %d X: %d Y: %d RR: %d ZR: %d SB: %d SL: %d SR: %d P: %d H: %d SX: %.5f SY: %.5f GR: %06d GP: %06d GY: %06d\n", \
-					jc->btns.a, jc->btns.b, jc->btns.x, jc->btns.y, jc->btns.r, jc->btns.zr, jc->btns.stick_button2, jc->btns.sl, jc->btns.sr, \
-					jc->btns.plus, jc->btns.home, (jc->stick2.CalX + 1), (jc->stick2.CalY + 1), (int)jc->gyro.roll, (int)jc->gyro.pitch, (int)jc->gyro.yaw);
-			}
-
 		}
 
 	}
@@ -862,10 +832,6 @@ void updatevJoyDevice2(Joycon* jc) {
 	}
 }
 
-
-
-
-
 void parseSettings2() {
 
 	//setupConsole("Debug");
@@ -896,10 +862,6 @@ void parseSettings2() {
 	settings.writeDebugToFile = (bool)stoi(cfg["writeDebugToFile"]);
 
 	settings.forcePollUpdate = (bool)stoi(cfg["forcePollUpdate"]);
-
-	settings.broadcastMode = (bool)stoi(cfg["broadcastMode"]);
-	settings.host = cfg["host"];
-	settings.writeCastToFile = (bool)stoi(cfg["writeCastToFile"]);
 
 	settings.autoStart = (bool)stoi(cfg["autoStart"]);
 
@@ -967,167 +929,7 @@ void pollLoop() {
 		updatevJoyDevice2(&joycons[i]);
 	}
 
-	// sleep:
-	if (settings.writeCastToFile) {
-		veryAccurateSleep(settings.timeToSleepMS);
-	}
-	else {
-		accurateSleep(settings.timeToSleepMS);
-	}
-
-
-	if (settings.broadcastMode && joycons.size() == 1) {
-		Joycon* jc = &joycons[0];
-		std::string newControllerState = "";
-
-
-		if (jc->btns.up == 1 && jc->btns.left == 1) {
-			newControllerState += "7";
-		}
-		else if (jc->btns.up && jc->btns.right == 1) {
-			newControllerState += "1";
-		}
-		else if (jc->btns.down == 1 && jc->btns.left == 1) {
-			newControllerState += "5";
-		}
-		else if (jc->btns.down == 1 && jc->btns.right == 1) {
-			newControllerState += "3";
-		}
-		else if (jc->btns.up == 1) {
-			newControllerState += "0";
-		}
-		else if (jc->btns.down == 1) {
-			newControllerState += "4";
-		}
-		else if (jc->btns.left == 1) {
-			newControllerState += "6";
-		}
-		else if (jc->btns.right == 1) {
-			newControllerState += "2";
-		}
-		else {
-			newControllerState += "8";
-		}
-
-		newControllerState += jc->btns.stick_button == 1 ? "1" : "0";
-		newControllerState += jc->btns.l == 1 ? "1" : "0";
-		newControllerState += jc->btns.zl == 1 ? "1" : "0";
-		newControllerState += jc->btns.minus == 1 ? "1" : "0";
-		newControllerState += jc->btns.capture == 1 ? "1" : "0";
-
-		newControllerState += jc->btns.a == 1 ? "1" : "0";
-		newControllerState += jc->btns.b == 1 ? "1" : "0";
-		newControllerState += jc->btns.x == 1 ? "1" : "0";
-		newControllerState += jc->btns.y == 1 ? "1" : "0";
-		newControllerState += jc->btns.stick_button2 == 1 ? "1" : "0";
-		newControllerState += jc->btns.r == 1 ? "1" : "0";
-		newControllerState += jc->btns.zr == 1 ? "1" : "0";
-		newControllerState += jc->btns.plus == 1 ? "1" : "0";
-		newControllerState += jc->btns.home == 1 ? "1" : "0";
-
-		int LX = ((jc->stick.CalX - 1.0) * 128) + 255;
-		int LY = ((jc->stick.CalY - 1.0) * 128) + 255;
-		int RX = ((jc->stick2.CalX - 1.0) * 128) + 255;
-		int RY = ((jc->stick2.CalY - 1.0) * 128) + 255;
-
-		newControllerState += " " + std::to_string(LX) + " " + std::to_string(LY) + " " + std::to_string(RX) + " " + std::to_string(RY);
-
-		if (newControllerState != settings.controllerState) {
-			/*settings.controllerState = newControllerState;
-			printf("%s\n", newControllerState);
-			myClient.socket()->emit("sendControllerState", newControllerState);*/
-		}
-
-		if (settings.writeCastToFile) {
-			//std::string filename = "C:\\Users\\Matt\\Desktop\\commands.txt";
-			//FILE* outputFile = fopen(filename.c_str(), "w");
-			//fprintf(outputFile, "%s\n", newControllerState);
-			//fclose(outputFile);
-			fprintf(settings.outputFile, "%s\n", newControllerState);
-		}
-	}
-
-	if (settings.broadcastMode && joycons.size() == 2) {
-		Joycon* jcL;
-		Joycon* jcR;
-
-		if (joycons[0].left_right == 1) {
-			jcL = &joycons[0];
-			jcR = &joycons[1];
-		}
-		else {
-			jcL = &joycons[1];
-			jcR = &joycons[0];
-		}
-
-		std::string newControllerState = "";
-
-
-		if (jcL->btns.up == 1 && jcL->btns.left == 1) {
-			newControllerState += "7";
-		}
-		else if (jcL->btns.up && jcL->btns.right == 1) {
-			newControllerState += "1";
-		}
-		else if (jcL->btns.down == 1 && jcL->btns.left == 1) {
-			newControllerState += "5";
-		}
-		else if (jcL->btns.down == 1 && jcL->btns.right == 1) {
-			newControllerState += "3";
-		}
-		else if (jcL->btns.up == 1) {
-			newControllerState += "0";
-		}
-		else if (jcL->btns.down == 1) {
-			newControllerState += "4";
-		}
-		else if (jcL->btns.left == 1) {
-			newControllerState += "6";
-		}
-		else if (jcL->btns.right == 1) {
-			newControllerState += "2";
-		}
-		else {
-			newControllerState += "8";
-		}
-
-		newControllerState += jcL->btns.stick_button == 1 ? "1" : "0";
-		newControllerState += jcL->btns.l == 1 ? "1" : "0";
-		newControllerState += jcL->btns.zl == 1 ? "1" : "0";
-		newControllerState += jcL->btns.minus == 1 ? "1" : "0";
-		newControllerState += jcL->btns.capture == 1 ? "1" : "0";
-
-		newControllerState += jcR->btns.a == 1 ? "1" : "0";
-		newControllerState += jcR->btns.b == 1 ? "1" : "0";
-		newControllerState += jcR->btns.x == 1 ? "1" : "0";
-		newControllerState += jcR->btns.y == 1 ? "1" : "0";
-		newControllerState += jcR->btns.stick_button2 == 1 ? "1" : "0";
-		newControllerState += jcR->btns.r == 1 ? "1" : "0";
-		newControllerState += jcR->btns.zr == 1 ? "1" : "0";
-		newControllerState += jcR->btns.plus == 1 ? "1" : "0";
-		newControllerState += jcR->btns.home == 1 ? "1" : "0";
-
-		int LX = ((jcL->stick.CalX - 1.0) * 128) + 255;
-		int LY = ((jcL->stick.CalY - 1.0) * 128) + 255;
-		int RX = ((jcR->stick.CalX - 1.0) * 128) + 255;
-		int RY = ((jcR->stick.CalY - 1.0) * 128) + 255;
-
-		newControllerState += " " + std::to_string(LX) + " " + std::to_string(LY) + " " + std::to_string(RX) + " " + std::to_string(RY);
-
-		if (newControllerState != settings.controllerState) {
-			//settings.controllerState = newControllerState;
-			//printf("%s\n", newControllerState);
-			//myClient.socket()->emit("sendControllerState", newControllerState);
-		}
-
-		if (settings.writeCastToFile) {
-			//std::string filename = "C:\\Users\\Matt\\Desktop\\commands.txt";
-			//FILE* outputFile = fopen(filename.c_str(), "w");
-			//fprintf(outputFile, "%s\n", newControllerState);
-			//fclose(outputFile);
-			fprintf(settings.outputFile, "%s\n", newControllerState);
-		}
-	}
+	accurateSleep(settings.timeToSleepMS);
 
 	if (settings.restart) {
 		settings.restart = false;
@@ -1167,7 +969,8 @@ bool start() {
 	}
 
 
-	if (settings.writeDebugToFile || settings.writeCastToFile) {
+	if (settings.writeDebugToFile) {
+		settings.debugMode = true;
 
 		// find a debug file to output to:
 		int fileNumber = 0;
@@ -1334,7 +1137,7 @@ int main(int argc, char* argv[]) {
 
 	setupConsole("Debug");
 	SetConsoleCtrlHandler(SignalHandler, true);
-	
+
 	parseSettings2();
 
 	if (start()) {
