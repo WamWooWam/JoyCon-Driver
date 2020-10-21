@@ -37,8 +37,8 @@ libs
 	│       vJoyInterface.lib
 	│
 	└───x86
-			vJoyInterface.dll
-			vJoyInterface.lib
+            vJoyInterface.dll
+            vJoyInterface.lib
 ```
 
 4. Open `joycon.sln` in Visual Studio (2019 or 2017), retarget if needed and build. 
