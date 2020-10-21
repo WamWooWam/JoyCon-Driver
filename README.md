@@ -32,11 +32,11 @@ libs
 │           hidapi.lib
 │
 └───vjoy
-	├───x64
-	│       vJoyInterface.dll
-	│       vJoyInterface.lib
-	│
-	└───x86
+    ├───x64
+    │       vJoyInterface.dll
+    │       vJoyInterface.lib
+    │
+    └───x86
             vJoyInterface.dll
             vJoyInterface.lib
 ```
